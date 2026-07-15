@@ -770,58 +770,14 @@
 
       // Mapa Google
       function initMap() {
-        const location = { lat: -23.6832833, lng: -46.5916741 };
-        const map = new google.maps.Map(document.getElementById("map"), {
-          zoom: 15,
-          center: location,
-          styles: [
-            {
-              featureType: "all",
-              elementType: "labels.text.fill",
-              stylers: [{ color: "#b8860b" }],
-            },
-            {
-              featureType: "water",
-              elementType: "geometry",
-              stylers: [{ color: "#1a1a2e" }],
-            },
-            {
-              featureType: "administrative",
-              elementType: "geometry",
-              stylers: [{ color: "#16213e" }],
-            },
-          ],
-        });
-
-        const marker = new google.maps.Marker({
-          position: location,
-          map: map,
-          title: "Barbearia Jé",
-          icon: "http://maps.google.com/mapfiles/ms/icons/FFD700.png",
-        });
-
-        const infoWindow = new google.maps.InfoWindow({
-          content:
-            '<div style="color: #1a1a2e; padding: 10px;"><strong>Barbearia Jé</strong><br>Av. Pres. Juscelino, 509<br>Diadema - SP<br>+55 11 96151-4618</div>',
-        });
-
-        marker.addListener("click", () => {
-          infoWindow.open(map, marker);
-        });
-        infoWindow.open(map, marker);
+        // Usar iframe do Google Maps para evitar problemas de API key
+        const mapContainer = document.getElementById("map");
+        mapContainer.innerHTML = '<iframe width="100%" height="400" style="border: none; border-radius: 15px;" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.8473568169636!2d-46.5916741!3d-23.6832833!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce43b7397deb27%3A0x9b8735e0bac8fff5!2sBarbearia%20do%20j%C3%A9!5e0!3m2!1spt-BR!2sbr!4v1234567890" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>';
       }
 
       document.addEventListener("DOMContentLoaded", () => {
         initCarousel();
-        // Carregar Google Maps quando o DOM estiver pronto
-        const script = document.createElement('script');
-        script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyD0P3jQjzZlVvSTvZ8_VpkH3oC9TblmfxI';
-        script.async = true;
-        script.defer = true;
-        script.onload = () => {
-          initMap();
-        };
-        document.head.appendChild(script);
+        initMap();
       });
     </script>
   </body>
