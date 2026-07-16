@@ -386,6 +386,143 @@
         margin-top: 10px;
       }
 
+      /* Galeria */
+      .gallery-section {
+        padding: 60px 20px;
+        text-align: center;
+      }
+
+      .gallery-section h2 {
+        font-size: 2.5em;
+        color: var(--secondary);
+        margin-bottom: 10px;
+      }
+
+      .gallery-subtitle {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 1.1em;
+        margin-bottom: 40px;
+      }
+
+      .gallery-container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .gallery-carousel {
+        position: relative;
+        background: rgba(22, 33, 62, 0.5);
+        border-radius: 20px;
+        padding: 30px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(184, 134, 11, 0.2);
+      }
+
+      .gallery-slides {
+        display: flex;
+        gap: 20px;
+        overflow: hidden;
+        border-radius: 15px;
+        margin-bottom: 30px;
+      }
+
+      .gallery-slide {
+        flex: 0 0 calc(33.333% - 14px);
+        aspect-ratio: 3/4;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        transition: transform 0.3s ease;
+      }
+
+      .gallery-slide:hover {
+        transform: scale(1.02);
+      }
+
+      .gallery-slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .gallery-controls {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .gallery-btn {
+        background: var(--secondary);
+        color: var(--primary);
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 1.2em;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: bold;
+      }
+
+      .gallery-btn:hover {
+        background: rgba(184, 134, 11, 0.8);
+        transform: scale(1.05);
+      }
+
+      .gallery-btn:active {
+        transform: scale(0.95);
+      }
+
+      .gallery-indicators {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .gallery-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: rgba(184, 134, 11, 0.4);
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .gallery-dot.active {
+        background: var(--secondary);
+        width: 30px;
+        border-radius: 5px;
+      }
+
+      @media (max-width: 768px) {
+        .gallery-slide {
+          flex: 0 0 calc(50% - 10px);
+        }
+
+        .gallery-section h2 {
+          font-size: 1.8em;
+        }
+
+        .gallery-carousel {
+          padding: 20px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .gallery-slide {
+          flex: 0 0 100%;
+        }
+
+        .gallery-controls {
+          gap: 10px;
+        }
+
+        .gallery-btn {
+          padding: 10px 15px;
+          font-size: 1em;
+        }
+      }
+
       /* Mapa */
       #map {
         width: 100%;
@@ -584,6 +721,28 @@
         </div>
       </section>
 
+      <!-- Seção de Galeria -->
+      <section class="gallery-section">
+        <h2>Galeria de Trabalhos</h2>
+        <p class="gallery-subtitle">Confira nossos melhores cortes e trabalhos</p>
+
+        <div class="gallery-container">
+          <div class="gallery-carousel">
+            <div class="gallery-slides" id="gallerySlidesContainer">
+              <!-- Slides serão inseridos por JavaScript -->
+            </div>
+
+            <div class="gallery-controls">
+              <button class="gallery-btn gallery-prev" onclick="prevGallerySlide()">❮</button>
+              <button class="gallery-btn gallery-pause" onclick="toggleGalleryPause()" id="pauseBtn">⏸</button>
+              <button class="gallery-btn gallery-next" onclick="nextGallerySlide()">❯</button>
+            </div>
+          </div>
+
+          <div class="gallery-indicators" id="galleryIndicators"></div>
+        </div>
+      </section>
+
       <!-- Seção de Contato -->
       <section>
         <h2>Contato & Localização</h2>
@@ -768,6 +927,109 @@
         startCarousel();
       }
 
+      // Galeria com 3 imagens por vez
+      const galleryImages = [
+        { fit: "cover", src: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwwDAwsFBAMDAwsFBAMDBwcGBwcGBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwsFBAMDBwcGBwcGBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwf/2wBDAQICAgICAwUDAwUHCAcIDwgHBwcHBwcIDAwMDAwIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA" },
+      ];
+
+      let galleryCurrentSlide = 0;
+      let galleryAutoplayTimer = null;
+      let galleryIsPaused = false;
+      const galleryImagesPerView = 3;
+      const galleryTotalSlides = Math.ceil(galleryImages.length / galleryImagesPerView);
+
+      function initGallery() {
+        const container = document.getElementById("gallerySlidesContainer");
+        container.innerHTML = "";
+
+        for (let i = 0; i < galleryTotalSlides; i++) {
+          const slideGroup = document.createElement("div");
+          slideGroup.className = "gallery-slides";
+          slideGroup.style.position = "absolute";
+          slideGroup.style.width = "100%";
+          slideGroup.style.opacity = i === 0 ? "1" : "0";
+          slideGroup.style.transition = "opacity 0.5s ease-in-out";
+
+          for (let j = 0; j < galleryImagesPerView; j++) {
+            const index = i * galleryImagesPerView + j;
+            if (index < galleryImages.length) {
+              const slide = document.createElement("div");
+              slide.className = "gallery-slide";
+              const img = document.createElement("img");
+              img.src = galleryImages[index].src;
+              img.style.objectFit = galleryImages[index].fit;
+              slide.appendChild(img);
+              slideGroup.appendChild(slide);
+            }
+          }
+
+          container.appendChild(slideGroup);
+        }
+
+        updateGalleryIndicators();
+        startGalleryAutoplay();
+      }
+
+      function updateGalleryIndicators() {
+        const indicators = document.getElementById("galleryIndicators");
+        indicators.innerHTML = "";
+
+        for (let i = 0; i < galleryTotalSlides; i++) {
+          const dot = document.createElement("div");
+          dot.className = "gallery-dot";
+          if (i === galleryCurrentSlide) dot.classList.add("active");
+          dot.onclick = () => goToGallerySlide(i);
+          indicators.appendChild(dot);
+        }
+      }
+
+      function goToGallerySlide(n) {
+        const slides = document.querySelectorAll("#gallerySlidesContainer > div");
+        galleryCurrentSlide = (n + galleryTotalSlides) % galleryTotalSlides;
+
+        slides.forEach((slide, index) => {
+          slide.style.opacity = index === galleryCurrentSlide ? "1" : "0";
+        });
+
+        updateGalleryIndicators();
+      }
+
+      function nextGallerySlide() {
+        goToGallerySlide(galleryCurrentSlide + 1);
+        resetGalleryAutoplay();
+      }
+
+      function prevGallerySlide() {
+        goToGallerySlide(galleryCurrentSlide - 1);
+        resetGalleryAutoplay();
+      }
+
+      function toggleGalleryPause() {
+        galleryIsPaused = !galleryIsPaused;
+        const btn = document.getElementById("pauseBtn");
+        btn.textContent = galleryIsPaused ? "▶" : "⏸";
+
+        if (galleryIsPaused) {
+          clearInterval(galleryAutoplayTimer);
+        } else {
+          startGalleryAutoplay();
+        }
+      }
+
+      function startGalleryAutoplay() {
+        if (galleryIsPaused) return;
+        clearInterval(galleryAutoplayTimer);
+        galleryAutoplayTimer = setInterval(() => {
+          goToGallerySlide(galleryCurrentSlide + 1);
+        }, 5000);
+      }
+
+      function resetGalleryAutoplay() {
+        if (!galleryIsPaused) {
+          startGalleryAutoplay();
+        }
+      }
+
       // Mapa Google
       function initMap() {
         // Usar iframe do Google Maps para evitar problemas de API key
@@ -777,6 +1039,7 @@
 
       document.addEventListener("DOMContentLoaded", () => {
         initCarousel();
+        initGallery();
         initMap();
       });
     </script>
