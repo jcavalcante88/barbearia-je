@@ -901,12 +901,17 @@
         { fit: "cover", src: "images/galeria-06.jpeg", alt: "Corte de cabelo" },
       ];
 
-      // Primeiro carrossel: 2 imagens por vez
+      // No mobile (<=768px) mostra 1 imagem por vez; no desktop mostra o total informado
+      function getImagesPerView(desktopCount) {
+        return window.innerWidth <= 768 ? 1 : desktopCount;
+      }
+
+      // Primeiro carrossel: 2 imagens por vez (1 no mobile)
       let worksCurrentSlide = 0;
       let worksAutoplayTimer = null;
       let worksIsPaused = false;
-      const worksImagesPerView = 2;
-      const worksTotalSlides = Math.ceil(
+      let worksImagesPerView = getImagesPerView(2);
+      let worksTotalSlides = Math.ceil(
         carouselImages.length / worksImagesPerView,
       );
 
@@ -1021,8 +1026,8 @@
       let galleryCurrentSlide = 0;
       let galleryAutoplayTimer = null;
       let galleryIsPaused = false;
-      const galleryImagesPerView = 3;
-      const galleryTotalSlides = Math.ceil(
+      let galleryImagesPerView = getImagesPerView(3);
+      let galleryTotalSlides = Math.ceil(
         galleryImages.length / galleryImagesPerView,
       );
 
@@ -1133,6 +1138,33 @@
         mapContainer.innerHTML =
           '<iframe width="100%" height="400" style="border: none; border-radius: 15px;" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.8473568169636!2d-46.5916741!3d-23.6832833!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce43b7397deb27%3A0x9b8735e0bac8fff5!2sBarbearia%20do%20j%C3%A9!5e0!3m2!1spt-BR!2sbr!4v1234567890" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>';
       }
+
+      // Reconstroi os carrosseis ao mudar entre mobile/desktop (muda nº de imagens por vez)
+      let resizeTimer = null;
+      window.addEventListener("resize", () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          const newWorks = getImagesPerView(2);
+          if (newWorks !== worksImagesPerView) {
+            worksImagesPerView = newWorks;
+            worksTotalSlides = Math.ceil(
+              carouselImages.length / worksImagesPerView,
+            );
+            worksCurrentSlide = 0;
+            initCarousel();
+          }
+
+          const newGallery = getImagesPerView(3);
+          if (newGallery !== galleryImagesPerView) {
+            galleryImagesPerView = newGallery;
+            galleryTotalSlides = Math.ceil(
+              galleryImages.length / galleryImagesPerView,
+            );
+            galleryCurrentSlide = 0;
+            initGallery();
+          }
+        }, 200);
+      });
 
       document.addEventListener("DOMContentLoaded", () => {
         initCarousel();
