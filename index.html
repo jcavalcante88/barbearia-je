@@ -422,6 +422,7 @@
       .gallery-slides {
         display: flex;
         gap: 20px;
+        justify-content: center;
         overflow: hidden;
         border-radius: 15px;
         margin-bottom: 30px;
@@ -430,25 +431,19 @@
       #gallerySlidesContainer,
       #worksSlidesContainer {
         position: relative;
-        height: 300px;
+        height: 420px;
         margin-bottom: 30px;
       }
 
-      /* Primeiro carrossel: 2 imagens por vez */
-      #worksSlidesContainer .gallery-slide {
-        flex: 0 0 calc(50% - 10px);
-      }
-
+      /* Imagens em formato retrato (3:4) - mesmo tamanho nos dois carrosseis */
       .gallery-slide {
-        flex: 0 0 calc(33.333% - 14px);
-        height: 300px;
+        flex: 0 0 auto;
+        height: 420px;
+        aspect-ratio: 3 / 4;
         border-radius: 10px;
         overflow: hidden;
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
         transition: transform 0.3s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
         background: rgba(0, 0, 0, 0.2);
       }
 
@@ -459,7 +454,7 @@
       .gallery-slide img {
         width: 100%;
         height: 100%;
-        object-fit: contain;
+        object-fit: cover;
       }
 
       .gallery-controls {
@@ -512,8 +507,13 @@
       }
 
       @media (max-width: 768px) {
+        #gallerySlidesContainer,
+        #worksSlidesContainer {
+          height: 340px;
+        }
+
         .gallery-slide {
-          flex: 0 0 calc(50% - 10px);
+          height: 340px;
         }
 
         .gallery-section h2 {
@@ -526,12 +526,13 @@
       }
 
       @media (max-width: 480px) {
-        .gallery-slide {
-          flex: 0 0 100%;
+        #gallerySlidesContainer,
+        #worksSlidesContainer {
+          height: 380px;
         }
 
-        #worksSlidesContainer .gallery-slide {
-          flex: 0 0 100%;
+        .gallery-slide {
+          height: 380px;
         }
 
         .gallery-controls {
@@ -687,7 +688,13 @@
 
             <div class="gallery-controls">
               <button class="gallery-btn" onclick="prevWorksSlide()">❮</button>
-              <button class="gallery-btn" onclick="toggleWorksPause()" id="worksPauseBtn">⏸</button>
+              <button
+                class="gallery-btn"
+                onclick="toggleWorksPause()"
+                id="worksPauseBtn"
+              >
+                ⏸
+              </button>
               <button class="gallery-btn" onclick="nextWorksSlide()">❯</button>
             </div>
           </div>
@@ -751,7 +758,9 @@
       <!-- Seção de Galeria -->
       <section class="gallery-section">
         <h2>Galeria de Trabalhos</h2>
-        <p class="gallery-subtitle">Confira nossos melhores cortes e trabalhos</p>
+        <p class="gallery-subtitle">
+          Confira nossos melhores cortes e trabalhos
+        </p>
 
         <div class="gallery-container">
           <div class="gallery-carousel">
@@ -760,9 +769,25 @@
             </div>
 
             <div class="gallery-controls">
-              <button class="gallery-btn gallery-prev" onclick="prevGallerySlide()">❮</button>
-              <button class="gallery-btn gallery-pause" onclick="toggleGalleryPause()" id="pauseBtn">⏸</button>
-              <button class="gallery-btn gallery-next" onclick="nextGallerySlide()">❯</button>
+              <button
+                class="gallery-btn gallery-prev"
+                onclick="prevGallerySlide()"
+              >
+                ❮
+              </button>
+              <button
+                class="gallery-btn gallery-pause"
+                onclick="toggleGalleryPause()"
+                id="pauseBtn"
+              >
+                ⏸
+              </button>
+              <button
+                class="gallery-btn gallery-next"
+                onclick="nextGallerySlide()"
+              >
+                ❯
+              </button>
             </div>
           </div>
 
@@ -848,7 +873,7 @@
     </div>
 
     <footer>
-      <p>&copy; 2026 Barbearia Jé - Excelência em Cada Corte</p>
+      <p>&copy; 2026 Barbearia do Jé - Excelência em Cada Corte</p>
       <p>Desenvolvido com qualidade para sua satisfação</p>
     </footer>
 
@@ -885,7 +910,7 @@
       let worksIsPaused = false;
       const worksImagesPerView = 2;
       const worksTotalSlides = Math.ceil(
-        carouselImages.length / worksImagesPerView
+        carouselImages.length / worksImagesPerView,
       );
 
       function initCarousel() {
@@ -1000,7 +1025,9 @@
       let galleryAutoplayTimer = null;
       let galleryIsPaused = false;
       const galleryImagesPerView = 3;
-      const galleryTotalSlides = Math.ceil(galleryImages.length / galleryImagesPerView);
+      const galleryTotalSlides = Math.ceil(
+        galleryImages.length / galleryImagesPerView,
+      );
 
       function initGallery() {
         const container = document.getElementById("gallerySlidesContainer");
@@ -1052,7 +1079,9 @@
       }
 
       function goToGallerySlide(n) {
-        const slides = document.querySelectorAll("#gallerySlidesContainer > div");
+        const slides = document.querySelectorAll(
+          "#gallerySlidesContainer > div",
+        );
         galleryCurrentSlide = (n + galleryTotalSlides) % galleryTotalSlides;
 
         slides.forEach((slide, index) => {
@@ -1104,7 +1133,8 @@
       function initMap() {
         // Usar iframe do Google Maps para evitar problemas de API key
         const mapContainer = document.getElementById("map");
-        mapContainer.innerHTML = '<iframe width="100%" height="400" style="border: none; border-radius: 15px;" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.8473568169636!2d-46.5916741!3d-23.6832833!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce43b7397deb27%3A0x9b8735e0bac8fff5!2sBarbearia%20do%20j%C3%A9!5e0!3m2!1spt-BR!2sbr!4v1234567890" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>';
+        mapContainer.innerHTML =
+          '<iframe width="100%" height="400" style="border: none; border-radius: 15px;" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.8473568169636!2d-46.5916741!3d-23.6832833!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce43b7397deb27%3A0x9b8735e0bac8fff5!2sBarbearia%20do%20j%C3%A9!5e0!3m2!1spt-BR!2sbr!4v1234567890" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>';
       }
 
       document.addEventListener("DOMContentLoaded", () => {
