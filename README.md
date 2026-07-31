@@ -4,9 +4,7 @@ Site **elegante e responsivo** para a Barbearia Jé, em Diadema-SP. Apresenta os
 
 🔗 **Demo ao vivo:** https://barbearia-je.vercel.app
 
-<!-- 📸 DICA: adicione um print do site. Salve em /images e descomente:
 ![Site da Barbearia Jé](images/screenshot.png)
--->
 
 ---
 
